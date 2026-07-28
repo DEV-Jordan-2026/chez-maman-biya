@@ -1,0 +1,25 @@
+{
+  "name": "Cuisine – Chez Maman Biya",
+  "short_name": "Cuisine CMB",
+  "description": "Interface cuisine temps réel — commandes, statuts, alertes.",
+  "start_url": "/cuisine",
+  "scope": "/cuisine",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#080605",
+  "theme_color": "#080605",
+  "lang": "fr",
+  "categories": ["food", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelles commandes",
+      "url": "/cuisine#nouveau",
+      "description": "Voir les commandes en attente"
+    }
+  ]
+}

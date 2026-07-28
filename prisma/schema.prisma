@@ -1,0 +1,869 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")   
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  NOUVEAU : Restaurant (pivot multi-site)
+// ─────────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────────
+//  v24 : Postes cuisine
+// ─────────────────────────────────────────────────────────────────
+enum PosteCuisine {
+  CHAUD
+  FROID
+  GRILLADE
+  PATISSERIE
+}
+
+model Restaurant {
+  id        String   @id @default(cuid())
+  nom       String
+  ville     String
+  quartier  String
+  adresse   String?
+  tel       String?
+  actif     Boolean  @default(true)
+  ouvert    Boolean  @default(true)
+  couleur   String?
+  slug      String?  @unique                     // URL publique du restaurant (ex: chez-maman-biya)
+
+  parametres      Json?                           // branding, horaires, zones livraison par resto
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users           User[]
+  commandes       Commande[]
+  reservations    Reservation[]
+  menuItems       MenuItem[]
+  stockItems      StockItem[]
+  caisseSessions  CaisseSession[]
+  bonsCommande    BonCommande[]
+  depenses        Depense[]
+  tables          Table[]
+  demandesAchat   DemandeAchat[]
+  receptions      Reception[]
+  notesFrais      NoteFrais[]
+  pointages       Pointage[]
+  primes          PrimePerformance[]
+  analyticsSummaries AnalyticsDailySummary[]
+  fournisseurs    Fournisseur[]
+  livreurs        Livreur[]
+  messages        MessageInterne[]
+  journalActivites JournalActivite[]
+  // C5-FIX — relation inverse CommandeTable
+  commandesTables  CommandeTable[]
+  // C6-FIX — relation inverse RemiseManuelle
+  remisesManuelles RemiseManuelle[]
+  // C8-FIX — relations inverses formelles
+  mouvementsStock  MouvementStock[]
+  scoresPerformance ScorePerformance[]
+  userBadges       UserBadge[]
+
+  @@map("restaurants")
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  Modèles existants — enrichis avec restaurantId
+// ─────────────────────────────────────────────────────────────────
+model Commande {
+  id            String   @id
+  restaurantId  String?
+  client        String
+  tel           String
+  mode          String   @default("Livraison")
+  items         Json
+  total         Int
+  addr          String?
+  note          String?
+  paiement      String   @default("livraison")
+  status        String   @default("nouveau")
+  transactionId String?
+  rembStatut    String?
+  rembMontant   Int?
+  rembAt        DateTime?
+  // v22 — Acompte à la livraison
+  acompte        Int      @default(0)      // montant dépôt CinetPay (ex: 1 500 XAF)
+  resteARegler   Int      @default(0)      // solde livreur (ex: 3 500 XAF)
+  acompteStatut  String?                   // null | 'requis' | 'paye' | 'exempte'
+  acompteTransId String?                   // transaction CinetPay de l'acompte
+  // v23 — QR code facture
+  numeroFacture  String?  @unique          // ex: "FAC-2025-000042"
+  qrHash         String?                   // HMAC-SHA256 hex pour vérification QR
+  // v25 — Assignation livreur
+  livreurId      String?                   // FK vers Livreur assigné à cette commande
+  // v26 — Encaissement à la livraison
+  encaisseMethode String?                  // 'especes' | 'mtn_momo' | 'orange_money'
+  encaisseMontant Int?                     // montant réellement encaissé par le livreur
+  encaisseAt      DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  restaurant    Restaurant? @relation(fields: [restaurantId], references: [id])
+  livreur       Livreur?    @relation(fields: [livreurId], references: [id])
+
+  @@map("commandes")
+  @@index([restaurantId])
+  @@index([tel])
+  @@index([status])
+  @@index([createdAt])
+  @@index([livreurId])
+}
+
+model Reservation {
+  id           String   @id
+  restaurantId String?
+  nom          String
+  tel          String
+  date         String
+  heure        String
+  personnes    Int      @default(2)
+  zone         String?
+  status       String   @default("en_attente")
+  notes        String?
+  arrhes            Int      @default(0)
+  arrhesPaie        Boolean  @default(false)
+  arrhesTransId     String?
+  arrhesRembStatut  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@map("reservations")
+  @@index([restaurantId])
+  @@index([date])
+  @@index([status])
+}
+
+model MenuItem {
+  id           Int      @id @default(autoincrement())
+  restaurantId String?
+  cat          String
+  name         String
+  price        Int
+  emoji        String?
+  actif        Boolean  @default(true)
+  popular      Boolean  @default(false)
+  desc         String?
+  image        String?
+  tempsPrep    Int      @default(20)
+  poste        PosteCuisine @default(CHAUD)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@map("menu_items")
+  @@index([restaurantId])
+  @@index([cat])
+  @@index([actif])
+}
+
+model Depense {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  libelle      String
+  montant      Int
+  categorie    String
+  date         String
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@map("depenses")
+  @@index([restaurantId])
+  @@index([date])
+}
+
+model StockItem {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  nom          String
+  unite        String
+  stock        Float
+  seuil        Float    @default(0)
+  cat          String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant?         @relation(fields: [restaurantId], references: [id])
+  recettes     RecetteIngredient[]
+  mouvements   MouvementStock[]
+
+  @@map("stock_items")
+  @@index([restaurantId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  v15 : Historique des mouvements de stock
+//  Enregistre chaque entrée / sortie / ajustement avec traçabilité
+// ─────────────────────────────────────────────────────────────────
+model MouvementStock {
+  id           String   @id @default(cuid())
+  stockItemId  String
+  restaurantId String?
+
+  // 'entree' | 'sortie' | 'ajustement' | 'inventaire'
+  type         String
+  // 'reception' | 'commande' | 'manuel' | 'inventaire'
+  source       String
+
+  quantite     Float    // valeur absolue du mouvement (toujours positive)
+  stockAvant   Float
+  stockApres   Float
+
+  reference    String?  // ID commande / réception / bon de commande
+  auteur       String   // nom de l'utilisateur déclencheur
+  note         String?
+
+  createdAt    DateTime @default(now())
+
+  stockItem    StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  // C8-FIX — relation formelle : SetNull conserve les mouvements après suppression restaurant (traçabilité audit)
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+
+  @@map("mouvements_stock")
+  @@index([stockItemId])
+  @@index([restaurantId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  NOUVEAU : Recettes (nomenclatures plat → ingrédients)
+//  Permet le décrément automatique du stock à la validation commande
+// ─────────────────────────────────────────────────────────────────
+model RecetteIngredient {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  menuItemId   Int      // référence MenuItem.id
+  menuItemNom  String   // dénormalisé pour performance
+  stockItemId  String   // référence StockItem.id
+  quantite     Float    // qté consommée par portion
+  unite        String   // unité (doit correspondre à StockItem.unite)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  stockItem    StockItem  @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+
+  @@unique([menuItemId, stockItemId])  // 1 ingrédient = 1 ligne par plat
+  @@map("recettes_ingredients")
+  @@index([menuItemId])
+  @@index([stockItemId])
+  @@index([restaurantId])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  login        String   @unique
+  password     String
+  role         String   // super_admin | manager | caissier | staff | serveur | magasinier
+  name         String
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant?     @relation(fields: [restaurantId], references: [id])
+  permissions  UserPermission[]
+  employeeProfile EmployeeProfile?
+
+  @@map("users")
+  @@index([restaurantId])
+  @@index([login])
+  @@index([role])
+}
+
+model Table {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  numero       Int
+  zone         String   @default("salle")
+  capacite     Int      @default(4)
+  status       String   @default("libre")
+  commandeId   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@unique([restaurantId, numero])
+  @@map("tables")
+  @@index([restaurantId])
+  @@index([zone])
+  @@index([status])
+}
+
+model CommandeTable {
+  id           String   @id
+  restaurantId String?                                                          // C5-FIX — isolation tenant
+  tableId      String
+  serveurId    String?
+  items        Json
+  total        Int      @default(0)
+  status       String   @default("ouvert")
+  note         String?
+  nbCouverts   Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id]) // C5-FIX
+
+  @@map("commandes_table")
+  @@index([restaurantId])                                                        // C5-FIX
+  @@index([tableId])
+  @@index([status])
+}
+
+model CaisseSession {
+  id             String   @id @default(cuid())
+  restaurantId   String?
+  ouvertPar      String
+  fondCaisse     Int      @default(0)
+  totalEspeces   Int      @default(0)
+  totalMoMo      Int      @default(0)
+  totalResto     Int      @default(0)
+  totalLivraison Int      @default(0)
+  nbCommandes    Int      @default(0)
+  ecart          Int      @default(0)
+  status         String   @default("ouverte")
+  note           String?
+  ouvertureAt    DateTime @default(now())
+  fermetureAt    DateTime?
+
+  restaurant     Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@map("caisse_sessions")
+  @@index([restaurantId])
+  @@index([status])
+}
+
+model Fournisseur {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  nom          String
+  tel          String?
+  categorie    String
+  note         String?
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant?   @relation(fields: [restaurantId], references: [id])
+  bonsCommande BonCommande[]
+
+  @@map("fournisseurs")
+  @@index([restaurantId])
+}
+
+model BonCommande {
+  id             String   @id @default(cuid())
+  restaurantId   String?
+  fournisseurId  String
+  demandeAchatId String?  // lien optionnel vers DemandeAchat
+  items          Json
+  total          Int      @default(0)
+  status         String   @default("brouillon")
+  dateCommande   String
+  dateLivraison  String?
+  note           String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  restaurant     Restaurant?  @relation(fields: [restaurantId], references: [id])
+  fournisseur    Fournisseur  @relation(fields: [fournisseurId], references: [id])
+
+  @@map("bons_commande")
+  @@index([restaurantId])
+  @@index([status])
+}
+
+model Livreur {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  nom          String
+  tel          String
+  zones        String[] @default([])
+  status       String   @default("disponible")
+  actif        Boolean  @default(true)
+  pinHash      String?  // v26 — PIN (4 chiffres, bcrypt) pour l'app livreur /livraison
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  commandes    Commande[]
+
+  @@map("livreurs")
+  @@index([status])
+  @@index([restaurantId])
+}
+
+model RemiseManuelle {
+  id           String   @id @default(cuid())
+  restaurantId String?                                                          // C6-FIX — isolation tenant
+  commandeId   String
+  montant      Int
+  motif        String
+  appliquePar  String
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id]) // C6-FIX
+
+  @@map("remises_manuelles")
+  @@index([restaurantId])                                                        // C6-FIX
+  @@index([commandeId])                                                          // C6-FIX — bonus lookup
+}
+
+model MessageInterne {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  auteur       String
+  auteurRole   String
+  destinataire String   @default("tous")
+  contenu      String
+  lu           Boolean  @default(false)
+  priorite     String   @default("normal")
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@map("messages_internes")
+  @@index([destinataire])
+  @@index([lu])
+  @@index([restaurantId])
+}
+
+model JournalActivite {
+  id           String   @id @default(cuid())
+  restaurantId String?
+  auteur       String
+  action       String
+  type         String
+  ref          String?
+  meta         Json?
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+
+  @@map("journal_activite")
+  @@index([type])
+  @@index([createdAt])
+  @@index([restaurantId])
+}
+
+model Parametre {
+  id           String   // nom du paramètre ex: "objectif_ca_jour"
+  restaurantId String   @default("")  // "" = global, sinon restaurantId spécifique
+  valeur       String
+  updatedAt    DateTime @updatedAt
+  updatedBy    String?
+
+  @@id([id, restaurantId])
+  @@map("parametres")
+  @@index([restaurantId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  NOUVEAU : Permissions granulaires
+// ─────────────────────────────────────────────────────────────────
+model Permission {
+  id     String @id @default(cuid())
+  code   String @unique // ex: "voir_analytics", "modifier_menu"
+  label  String
+  groupe String  // "Finance", "Opérations", "RH", "Achats"
+
+  userPermissions UserPermission[]
+
+  @@map("permissions")
+}
+
+model UserPermission {
+  userId       String
+  permissionId String
+  accordePar   String
+  accordeAt    DateTime @default(now())
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, permissionId])
+  @@map("user_permissions")
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  NOUVEAU : Module Achats
+// ─────────────────────────────────────────────────────────────────
+model DemandeAchat {
+  id             String   @id @default(cuid())
+  restaurantId   String
+  demandeurId    String
+  demandeurNom   String
+  article        String
+  quantite       Float
+  unite          String
+  montantEstime  Int?
+  motif          String?
+  urgence        String   @default("normale") // normale | urgent | critique
+  status         String   @default("en_attente")
+  // en_attente | approuvee_manager | approuvee_admin | refusee | commandee | recue
+  valideePar     String?
+  refuseePar     String?
+  motifRefus     String?
+  bonCommandeId  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("demandes_achat")
+  @@index([restaurantId])
+  @@index([status])
+  @@index([demandeurId])
+}
+
+model Reception {
+  id              String   @id @default(cuid())
+  restaurantId    String
+  bonCommandeId   String
+  receptionnePar  String
+  items           Json     // [{ article, qteCommandee, qteRecue, conforme }]
+  observation     String?
+  status          String   @default("complete") // complete | partielle | litige
+  createdAt       DateTime @default(now())
+
+  restaurant      Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("receptions")
+  @@index([restaurantId])
+  @@index([bonCommandeId])
+}
+
+model NoteFrais {
+  id           String   @id @default(cuid())
+  restaurantId String
+  employeId    String
+  employeNom   String
+  montant      Int
+  categorie    String   // Transport | Repas | Matériel | Autre
+  description  String
+  justificatif String?
+  status       String   @default("en_attente") // en_attente | validee | refusee
+  valideePar   String?
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("notes_frais")
+  @@index([restaurantId])
+  @@index([employeId])
+  @@index([status])
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  NOUVEAU : Module RH
+// ─────────────────────────────────────────────────────────────────
+model Pointage {
+  id           String   @id @default(cuid())
+  restaurantId String
+  userId       String
+  userName     String
+  type         String   // arrivee | depart | pause_debut | pause_fin
+  heure        DateTime @default(now())
+  noteManager  String?
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("pointages")
+  @@index([userId])
+  @@index([restaurantId])
+}
+
+model PrimePerformance {
+  id           String   @id @default(cuid())
+  restaurantId String
+  userId       String
+  userName     String
+  montant      Int
+  motif        String
+  periode      String   // "2026-05"
+  accordePar   String
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@map("primes_performance")
+  @@index([restaurantId])
+  @@index([userId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  NOUVEAU : Analytics agrégés (performance)
+// ─────────────────────────────────────────────────────────────────
+model AnalyticsDailySummary {
+  id           String   @id @default(cuid())
+  restaurantId String
+  date         String   // "2026-05-29"
+  caTotal      Int      @default(0)
+  nbCommandes  Int      @default(0)
+  nbCouverts   Int      @default(0)
+  topPlats     Json     // [{ nom, qte, ca }]
+  parHeure     Json     // [{ heure, ca }]
+  createdAt    DateTime @default(now())
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@unique([restaurantId, date])
+  @@map("analytics_daily")
+  @@index([restaurantId])
+}
+
+// ─────────────────────────────────────────────────────────────────
+//  MODULE RH ÉTENDU — v13.1
+// ─────────────────────────────────────────────────────────────────
+
+model ScorePerformance {
+  id           String   @id @default(cuid())
+  restaurantId String
+  userId       String
+  userName     String
+  semaine      String   // "2026-W22"
+  scoreGlobal  Int      // 0-100
+  scorePresence    Int  @default(0) // ponctualité
+  scoreProductivite Int @default(0) // commandes/h
+  scoreQualite     Int @default(0)  // erreurs signalées
+  nbHeuresTravail  Float @default(0)
+  nbCommandesTraitees Int @default(0)
+  nbRetards        Int @default(0)
+  nbErreurs        Int @default(0)
+  detail       Json?    // breakdown
+  createdAt    DateTime @default(now())
+
+  @@unique([userId, semaine])
+  @@map("scores_performance")
+  @@index([restaurantId])
+  @@index([userId])
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade) // C8-FIX
+}
+
+model PlanningShift {
+  id           String   @id @default(cuid())
+  restaurantId String
+  userId       String
+  userName     String
+  userRole     String
+  date         String   // "2026-05-30"
+  heureDebut   String   // "08:00"
+  heureFin     String   // "16:00"
+  poste        String   // "Caisse", "Cuisine", "Salle", "Livraison"
+  statut       String   @default("planifie") // planifie | confirme | absent | remplace
+  note         String?
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("planning_shifts")
+  @@index([restaurantId])
+  @@index([date])
+  @@index([userId])
+}
+
+model Signalement {
+  id           String   @id @default(cuid())
+  restaurantId String
+  categorie    String   // hygiene | conflit | vol | securite | autre
+  description  String
+  gravite      String   @default("normale") // normale | grave | critique
+  statut       String   @default("ouvert")  // ouvert | en_traitement | resolu | classe
+  // Anonymat total — aucun userId stocké
+  traitePar    String?
+  commentaireTraitement String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("signalements")
+  @@index([restaurantId])
+  @@index([statut])
+}
+
+model ChecklistTemplate {
+  id           String   @id @default(cuid())
+  restaurantId String?  // null = global
+  role         String   // staff | caissier | magasinier | serveur | manager
+  moment       String   // ouverture | fermeture | service
+  titre        String
+  items        Json     // [{ id, label, obligatoire }]
+  actif        Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  completions  ChecklistCompletion[]
+
+  @@map("checklist_templates")
+  @@index([role])
+}
+
+model ChecklistCompletion {
+  id           String   @id @default(cuid())
+  templateId   String
+  userId       String
+  userName     String
+  restaurantId String
+  date         String   // "2026-05-30"
+  moment       String   // ouverture | fermeture
+  itemsCoches  Json     // [{ id, coche, commentaire? }]
+  complet      Boolean  @default(false)
+  signature    String?  // "validé à 08:32"
+  createdAt    DateTime @default(now())
+
+  template     ChecklistTemplate @relation(fields: [templateId], references: [id])
+
+  @@unique([templateId, userId, date, moment])
+  @@map("checklist_completions")
+  @@index([userId])
+  @@index([date])
+}
+
+model HeureSupplementaire {
+  id              String   @id @default(cuid())
+  restaurantId    String
+  userId          String
+  userName        String
+  semaine         String   // "2026-W22"
+  heuresNormales  Float    @default(0)
+  heuresSup       Float    @default(0)
+  tauxMajoration  Float    @default(1.5) // 1.5 ou 2.0
+  montantBrut     Int      @default(0)
+  statut          String   @default("calculee") // calculee | approuvee | payee | contestee
+  approuvePar     String?
+  note            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, semaine])
+  @@map("heures_supplementaires")
+  @@index([restaurantId])
+  @@index([userId])
+  @@index([statut])
+}
+
+model Evaluation {
+  id           String   @id @default(cuid())
+  restaurantId String
+  type         String   // manager_vers_staff | staff_vers_conditions
+  evaluateurId String?  // null si anonyme (staff_vers_conditions)
+  evalueId     String?  // null si évaluation des conditions
+  evalueNom    String?
+  periode      String   // "2026-T2" (trimestre)
+  criteres     Json     // [{ id, label, note: 1-5, commentaire }]
+  noteGlobale  Float
+  pointsForts  String?
+  axesAmelioration String?
+  createdAt    DateTime @default(now())
+
+  @@map("evaluations")
+  @@index([restaurantId])
+  @@index([evalueId])
+  @@index([periode])
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  label       String
+  description String
+  emoji       String
+  couleur     String   @default("#C9973C")
+  condition   String   // description de la condition de déclenchement
+  userBadges  UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id           String   @id @default(cuid())
+  userId       String
+  userName     String
+  restaurantId String
+  badgeId      String
+  obtenuLe     DateTime @default(now())
+  contexte     String?  // "Semaine du 26 mai 2026"
+
+  badge        Badge    @relation(fields: [badgeId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade) // C8-FIX
+
+  @@unique([userId, badgeId, contexte])
+  @@map("user_badges")
+  @@index([userId])
+  @@index([restaurantId])
+}
+
+// ── Dossier Employé — Fiche administrative complète ────────────────────────
+model EmployeeProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique  // Lié au compte User
+  restaurantId    String?
+
+  // Identité
+  dateNaissance   String?  // format YYYY-MM-DD
+  lieuNaissance   String?
+  nationalite     String?  @default("Camerounaise")
+  cni             String?  // Numéro CNI / passeport
+  cniExpiration   String?  // date d'expiration CNI
+
+  // Coordonnées
+  adresse         String?
+  ville           String?
+  tel             String?
+  telUrgence      String?
+  contactUrgence  String?  // Nom du contact d'urgence
+  lienUrgence     String?  // Relation (parent, époux(se)…)
+
+  // Poste & contrat
+  poste           String?  // Caissier, Serveur, Chef de cuisine…
+  typeContrat     String?  // CDI | CDD | Stage | Vacataire
+  dateEmbauche    String?
+  dateFinContrat  String?  // Pour CDD / Stage
+  salaire         Int?     // FCFA brut/mois
+  modePaieSalaire String?  // Virement | Espèces | Mobile Money
+  numeroRIB       String?  // Pour virement bancaire
+  numeroMoMo      String?  // Numéro Mobile Money (salaire)
+
+  // Documents RH
+  cniFournie      Boolean  @default(false)
+  contratSigne    Boolean  @default(false)
+  photoFournie    Boolean  @default(false)
+  casierFourni    Boolean  @default(false)  // Casier judiciaire
+
+  // Notes
+  note            String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("employee_profiles")
+  @@index([restaurantId])
+}
+
+// ── Séquence numéros facture / rapport Z (C3 race-condition + A1 caisse directe)
+model FactureSequence {
+  id             String   @id @default(cuid())
+  restaurantId   String
+  type           String   @default("z_rapport") // "z_rapport" | "vente_directe" | …
+  derniereValeur Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([restaurantId, type], name: "restaurantId_type")
+  @@map("facture_sequences")
+}

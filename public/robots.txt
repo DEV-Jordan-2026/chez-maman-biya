@@ -1,0 +1,7 @@
+# Robots.txt — Chez Maman Biya
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://chezmamanbiya.cm/sitemap.xml

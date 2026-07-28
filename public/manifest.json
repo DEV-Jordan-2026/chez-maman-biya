@@ -1,0 +1,27 @@
+{
+  "name": "Chez Maman Biya",
+  "short_name": "Maman Biya",
+  "description": "Restaurant camerounais à Yaoundé. Commandez en ligne, réservez une table.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0a07",
+  "theme_color": "#c8783a",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "categories": [
+    "food",
+    "restaurant"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
