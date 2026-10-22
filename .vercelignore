@@ -1,0 +1,6 @@
+# Fichiers locaux à ne jamais publier quand on déploie avec `vercel` depuis ce PC :
+# les vraies clés restent dans les variables d'environnement du projet Vercel.
+.env
+.env.local
+.env.production
+.env*.local

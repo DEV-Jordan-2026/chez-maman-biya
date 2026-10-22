@@ -20,6 +20,7 @@ const PUBLIC_API_PREFIXES = [
   '/api/images',             // GET public (images du site)
   '/api/events',             // SSE (auth vérifiée dans la route)
   '/api/livreur/',           // v26 — App livreur, authentifiée via cookie cmb_livreur_session (requireLivreur)
+  '/api/cron/',              // tâches planifiées Vercel (CRON_SECRET vérifié dans la route)
 ]
 
 function checkOrigin(request) {
