@@ -35,7 +35,7 @@ export default function Footer() {
   const isOuvert = useIsOuvert()
 
   return (
-    <footer style={{ background: 'var(--ebony-1)', borderTop: '1px solid var(--border-gold)', color: 'var(--cream)', fontFamily: 'var(--font-dm)' }}>
+    <footer className="site-footer" style={{ background: 'var(--ebony-1)', borderTop: '1px solid var(--border-gold)', color: 'var(--cream)', fontFamily: 'var(--font-dm)' }}>
       {/* Ligne or haut */}
       <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, var(--gold) 20%, var(--terracotta) 50%, var(--gold) 80%, transparent)' }} />
 
@@ -116,7 +116,7 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {[
                 { icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z', text: 'Quartier Bastos, Yaoundé, Cameroun' },
-                { icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', text: '+237 677 000 000', href: 'tel:+237677000000' },
+                { icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', text: '+237 691 78 33 41', href: 'tel:+237691783341' },
                 { icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', text: 'contact@chezmamanbiya.cm', href: 'mailto:contact@chezmamanbiya.cm' },
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
@@ -138,6 +138,14 @@ export default function Footer() {
 
         {/* Séparateur + bas */}
         <div style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--border-subtle)' }}>
+          {/* Mention démo : le restaurant est fictif, le téléphone et WhatsApp mènent au développeur */}
+          <p style={{ fontSize: 12, color: 'rgba(240,232,216,.55)', lineHeight: 1.6, marginBottom: 18, maxWidth: 720 }}>
+            Site de démonstration : Chez Maman Biya est un restaurant fictif. Le téléphone et WhatsApp
+            mènent à Steve Jordan Tankoua, développeur du site.{' '}
+            <a href="https://portfolio-steve-jordan.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)' }}>
+              Voir son portfolio
+            </a>
+          </p>
           <div className="footer-bottom-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
               <div style={{ fontSize: 11, color: 'rgba(240,232,216,.2)', letterSpacing: .5 }}>

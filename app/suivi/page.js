@@ -236,7 +236,7 @@ function SuiviContent() {
 
             {/* WhatsApp */}
             <a
-              href={`https://wa.me/${(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237677000000')}?text=Bonjour,%20je%20veux%20un%20update%20sur%20ma%20commande%20${commande.id}`}
+              href={`https://wa.me/${(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237691783341')}?text=Bonjour,%20je%20veux%20un%20update%20sur%20ma%20commande%20${commande.id}`}
               target="_blank" rel="noopener noreferrer"
               style={{
                 display: 'block', marginTop: 20, textAlign: 'center',
@@ -315,7 +315,7 @@ function SuiviContent() {
             <p>💡 Votre numéro de commande vous a été communiqué lors de la confirmation.</p>
             <p style={{ marginTop: 8 }}>
               Besoin d'aide ?{' '}
-              <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237677000000'}`} target="_blank" rel="noopener noreferrer"
+              <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237691783341'}`} target="_blank" rel="noopener noreferrer"
                 style={{ color: 'var(--gold)', textDecoration: 'none' }}>
                 WhatsApp
               </a>

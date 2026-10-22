@@ -22,7 +22,7 @@ export default function ConfidentialitePage() {
           { titre: '3. Conservation', contenu: 'Vos données de commande sont conservées 3 ans à compter de la dernière transaction, conformément aux obligations comptables.' },
           { titre: '4. Vos droits', contenu: 'Vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données. Pour exercer ces droits, contactez-nous à contact@chezmamanbiya.cm.' },
           { titre: '5. Cookies', contenu: 'Ce site utilise uniquement des cookies techniques strictement nécessaires au fonctionnement du service (session d\'authentification). Aucun cookie publicitaire ou de tracking n\'est utilisé.' },
-          { titre: '6. Contact DPO', contenu: 'Pour toute question relative à la confidentialité de vos données : contact@chezmamanbiya.cm · +237 677 000 000' },
+          { titre: '6. Contact DPO', contenu: 'Pour toute question relative à la confidentialité de vos données : contact@chezmamanbiya.cm · +237 691 78 33 41' },
         ].map(s => (
           <section key={s.titre} style={{ marginBottom: 36 }}>
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 17, color: '#c8783a', marginBottom: 10 }}>{s.titre}</h2>

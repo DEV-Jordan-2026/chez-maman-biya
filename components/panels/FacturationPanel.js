@@ -63,7 +63,7 @@ export default function FacturationPanel({ commandes }) {
         .center { text-align: center; }
       </style></head><body>
       <h2>⭐ CHEZ MAMAN BIYA ⭐</h2>
-      <p class="center">Quartier Bastos, Yaoundé<br>Tel: +237 677 000 000</p>
+      <p class="center">Quartier Bastos, Yaoundé<br>Tel: +237 691 78 33 41</p>
       <div class="sep"></div>
       <div class="line"><span>Commande:</span><span>${cmd.id}</span></div>
       <div class="line"><span>Client:</span><span>${cmd.client || '-'}</span></div>
@@ -212,7 +212,7 @@ function ApercuRecu({ cmd, onPrint, paiLabels, totalFn }) {
         <div style={{ fontSize: 15, fontWeight: 800 }}>⭐ CHEZ MAMAN BIYA ⭐</div>
         <div style={{ opacity: .4, fontSize: 11, marginTop: 3 }}>
           Quartier Bastos, Yaoundé<br />
-          +237 677 000 000
+          +237 691 78 33 41
         </div>
       </div>
 

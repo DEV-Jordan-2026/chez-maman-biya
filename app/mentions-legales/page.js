@@ -17,7 +17,7 @@ export default function MentionsLegalesPage() {
         <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 32, color: '#c8783a', marginBottom: 40 }}>Mentions légales</h1>
 
         {[
-          { titre: '1. Éditeur du site', contenu: 'Le site chezmamanbiya.cm est édité par le restaurant Chez Maman Biya, établissement situé au Quartier Bastos, Yaoundé, Cameroun.\nResponsable de publication : Maman Biya\nContact : contact@chezmamanbiya.cm · +237 677 000 000' },
+          { titre: '1. Éditeur du site', contenu: 'Le site chezmamanbiya.cm est édité par le restaurant Chez Maman Biya, établissement situé au Quartier Bastos, Yaoundé, Cameroun.\nResponsable de publication : Maman Biya\nContact : contact@chezmamanbiya.cm · +237 691 78 33 41' },
           { titre: '2. Hébergement', contenu: 'Ce site est hébergé par Vercel Inc., 340 Pine Street, San Francisco, CA 94104, États-Unis.' },
           { titre: '3. Propriété intellectuelle', contenu: 'L\'ensemble des contenus de ce site (textes, images, logos) est la propriété exclusive de Chez Maman Biya. Toute reproduction sans autorisation écrite est interdite.' },
           { titre: '4. Responsabilité', contenu: 'Chez Maman Biya s\'efforce d\'assurer l\'exactitude des informations diffusées sur ce site. Toutefois, elle ne peut garantir l\'exhaustivité ni l\'exactitude des informations et décline toute responsabilité pour toute imprécision ou omission.' },

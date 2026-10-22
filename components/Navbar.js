@@ -23,8 +23,8 @@ export default function Navbar() {
   const { config } = useRestaurantConfig()
   const nomResto   = config.nom     || 'Chez Maman Biya'
   const tagline    = config.tagline || 'Restaurant · Yaoundé'
-  const telAffiche = config.tel     || '+237 677 000 000'
-  const telHref    = `tel:${(config.tel || '+237677000000').replace(/[\s\-().]/g, '')}`
+  const telAffiche = config.tel     || '+237 691 78 33 41'
+  const telHref    = `tel:${(config.tel || '+237691783341').replace(/[\s\-().]/g, '')}`
 
   const isAdmin = pathname?.startsWith('/admin')
 

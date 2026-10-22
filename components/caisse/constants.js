@@ -51,7 +51,7 @@ export function buildReceiptHTML({ id, client, tel, mode, paiement, dateStr, ite
   sousTotal, reduction, remise = 0, remiseMotif = '', total, caissier, sessionId,
   note, renduMonnaie = 0, restaurantNom = 'CHEZ MAMAN BIYA',
   restaurantAdresse = 'Quartier Bastos, Yaoundé, Cameroun',
-  restaurantTel = '+237 677 000 000', tableNumero = null, numeroFacture = null,
+  restaurantTel = '+237 691 78 33 41', tableNumero = null, numeroFacture = null,
   logo = null, qrUrl = null }) {
   const lignesHTML = items.map(it =>
     `<div class="r"><span>${it.qty||1}× ${it.name}</span><span>${((it.price||0)*(it.qty||1)).toLocaleString('fr-FR')} FCFA</span></div>`

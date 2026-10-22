@@ -100,7 +100,7 @@ function msgStatutCommande(cmd, nouveauStatut) {
     'en_preparation': '👨‍🍳 Votre commande est en préparation !',
     'en_livraison':   '🛵 Votre commande est en route !',
     'livre':          '✅ Commande livrée ! Bon appétit 🍽️',
-    'annule':         '❌ Commande annulée. Contactez-nous au +237 677 000 000',
+    'annule':         '❌ Commande annulée. Contactez-nous au +237 691 78 33 41',
   }
 
   return `*Chez Maman Biya* — ${cmd.id}
@@ -108,7 +108,7 @@ function msgStatutCommande(cmd, nouveauStatut) {
 ${msgs[nouveauStatut] || `Statut : ${nouveauStatut}`}
 ${nouveauStatut === 'en_livraison' ? '\nPaiement espèces à la réception 💵' : ''}
 
-Questions ? +237 677 000 000`
+Questions ? +237 691 78 33 41`
 }
 
 function msgNouvelleReservation(resa) {
@@ -134,7 +134,7 @@ Votre réservation est bien enregistrée.
 👥 ${resa.personnes} personne${resa.personnes > 1 ? 's' : ''}
 
 Nous vous confirmons sous peu.
-Questions : *+237 677 000 000*
+Questions : *+237 691 78 33 41*
 
 À très bientôt ! 🍽️
 _Chez Maman Biya · Bastos, Yaoundé_`
@@ -214,7 +214,7 @@ export async function POST(request) {
 
       case 'commande_annulee':
         if (data.tel) resultats.push(await envoyerWA(data.tel,
-          `❌ *Commande annulée — ${data.id}*\n\nVotre commande a été annulée${data.annulePar === 'staff' ? ' par le restaurant' : ''}.\n\n${data.messageRemb || ''}\n\nPour toute question : +237 677 000 000\n_Chez Maman Biya_`
+          `❌ *Commande annulée — ${data.id}*\n\nVotre commande a été annulée${data.annulePar === 'staff' ? ' par le restaurant' : ''}.\n\n${data.messageRemb || ''}\n\nPour toute question : +237 691 78 33 41\n_Chez Maman Biya_`
         ))
         if (RESTO_WA) resultats.push(await envoyerWA(RESTO_WA,
           `❌ Commande annulée — ${data.id} — ${data.client || ''} (${data.tel || ''})${data.rembInfo?.ok === false ? '\n⚠️ REMBOURSEMENT MANUEL REQUIS : ' + (data.total || 0).toLocaleString('fr-FR') + ' FCFA' : ''}`
@@ -223,7 +223,7 @@ export async function POST(request) {
 
       case 'commande_refusee':
         if (data.tel) resultats.push(await envoyerWA(data.tel,
-          `⚠️ *Commande refusée — ${data.id}*\n\nNous sommes désolés, nous ne pouvons pas traiter votre commande pour la raison suivante :\n\n*${data.motifRefus || 'Non précisé'}*\n\n${data.messageRemb || ''}\n\nVous pouvez repasser commande sur notre site ou nous appeler au +237 677 000 000.\n\n_Chez Maman Biya_`
+          `⚠️ *Commande refusée — ${data.id}*\n\nNous sommes désolés, nous ne pouvons pas traiter votre commande pour la raison suivante :\n\n*${data.motifRefus || 'Non précisé'}*\n\n${data.messageRemb || ''}\n\nVous pouvez repasser commande sur notre site ou nous appeler au +237 691 78 33 41.\n\n_Chez Maman Biya_`
         ))
         if (RESTO_WA) resultats.push(await envoyerWA(RESTO_WA,
           `🚫 Commande refusée par ${data.refusePar} — ${data.id} — Motif : ${data.motifRefus}`
@@ -232,7 +232,7 @@ export async function POST(request) {
 
       case 'reservation_confirmee':
         if (data.tel) resultats.push(await envoyerWA(data.tel,
-          `✅ *Réservation confirmée — Chez Maman Biya*\n\nBonjour ${data.nom} ! Votre réservation est confirmée :\n\n📅 Date : ${data.date} à ${data.heure}\n👥 ${data.personnes} personne${data.personnes>1?'s':''}\n${data.zone ? `🪑 Espace : ${data.zone === 'vip' ? 'VIP ⭐' : data.zone === 'terrasse' ? 'Terrasse 🌿' : 'Salle 🏠'}\n` : ''}${data.arrhes > 0 && data.arrhesPaie ? `💳 Arrhes reçues : ${data.arrhes.toLocaleString('fr-FR')} FCFA ✓\n` : ''}\nNous vous attendons avec plaisir !\n\nPour annuler (>24h avant) : +237 677 000 000\n_Chez Maman Biya_`
+          `✅ *Réservation confirmée — Chez Maman Biya*\n\nBonjour ${data.nom} ! Votre réservation est confirmée :\n\n📅 Date : ${data.date} à ${data.heure}\n👥 ${data.personnes} personne${data.personnes>1?'s':''}\n${data.zone ? `🪑 Espace : ${data.zone === 'vip' ? 'VIP ⭐' : data.zone === 'terrasse' ? 'Terrasse 🌿' : 'Salle 🏠'}\n` : ''}${data.arrhes > 0 && data.arrhesPaie ? `💳 Arrhes reçues : ${data.arrhes.toLocaleString('fr-FR')} FCFA ✓\n` : ''}\nNous vous attendons avec plaisir !\n\nPour annuler (>24h avant) : +237 691 78 33 41\n_Chez Maman Biya_`
         ))
         if (RESTO_WA) resultats.push(await envoyerWA(RESTO_WA,
           `✅ Réservation confirmée — ${data.id} — ${data.nom} — ${data.date} ${data.heure} — ${data.personnes} pers.${data.zone ? ` — ${data.zone}` : ''}`
@@ -241,7 +241,7 @@ export async function POST(request) {
 
       case 'reservation_annulee':
         if (data.tel) resultats.push(await envoyerWA(data.tel,
-          `❌ *Réservation annulée — Chez Maman Biya*\n\nBonjour ${data.nom}, votre réservation du ${data.date} à ${data.heure} a été annulée.\n\n${data.arrhesRembStatut === 'rembourse' ? `💳 Remboursement des arrhes (${data.arrhes?.toLocaleString('fr-FR')} FCFA) en cours — délai 24-72h.` : data.arrhesRembStatut === 'forfait' ? `⚠️ Annulation tardive — les arrhes sont retenues selon nos conditions.` : ''}\n\nPour toute question : +237 677 000 000\n_Chez Maman Biya_`
+          `❌ *Réservation annulée — Chez Maman Biya*\n\nBonjour ${data.nom}, votre réservation du ${data.date} à ${data.heure} a été annulée.\n\n${data.arrhesRembStatut === 'rembourse' ? `💳 Remboursement des arrhes (${data.arrhes?.toLocaleString('fr-FR')} FCFA) en cours — délai 24-72h.` : data.arrhesRembStatut === 'forfait' ? `⚠️ Annulation tardive — les arrhes sont retenues selon nos conditions.` : ''}\n\nPour toute question : +237 691 78 33 41\n_Chez Maman Biya_`
         ))
         if (RESTO_WA) resultats.push(await envoyerWA(RESTO_WA,
           `❌ Réservation annulée — ${data.id} — ${data.nom} (${data.tel}) — ${data.date} ${data.heure}`

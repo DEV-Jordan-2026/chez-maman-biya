@@ -86,7 +86,7 @@ export default function HeroClient({ platDuJour, siteImages = {}, platsVedettes 
     return () => observer.disconnect()
   }, [])
 
-  const WA_NUM = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237677000000'
+  const WA_NUM = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237691783341'
   const wa = `https://wa.me/${WA_NUM}?text=Bonjour%20Maman%20Biya%2C%20je%20voudrais%20commander%20!`
   const temo = TEMOS[temoIdx]
 
@@ -214,6 +214,9 @@ export default function HeroClient({ platDuJour, siteImages = {}, platsVedettes 
               <div style={{ width: 28, height: 2, background: 'linear-gradient(90deg, var(--gold), var(--terracotta))', borderRadius: 1 }} />
               <span style={{ fontSize: 10, letterSpacing: 4, textTransform: 'uppercase', color: 'var(--gold)', fontWeight: 600 }}>
                 Restaurant Camerounais · Yaoundé, Bastos
+              </span>
+              <span title="Restaurant fictif : site de démonstration" style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'var(--cream)', fontWeight: 600, border: '1px solid var(--border-gold)', borderRadius: 4, padding: '2px 7px' }}>
+                Démo
               </span>
             </div>
 

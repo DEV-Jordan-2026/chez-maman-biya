@@ -7,9 +7,9 @@ export const DEFAULT_CONFIG = {
   nom:      'Chez Maman Biya',
   tagline:  'Restaurant · Yaoundé',
   adresse:  'Bastos, Yaoundé, Cameroun',
-  tel:      '+237 677 000 000',
+  tel:      '+237 691 78 33 41',
   email:    'contact@chezmamanbiya.cm',
-  whatsapp: '+237677000000',
+  whatsapp: '+237691783341',
   logo:     null,
   couleurs: {
     gold:       '#C9973C',

@@ -16,11 +16,16 @@ const SUGGESTIONS = [
 
 // Pages où les bulles flottantes (WhatsApp + Chatbot) gênent une action
 // principale déjà présente en bas d'écran (panier, encaissement, cuisine…)
-const PAGES_SANS_BULLES = ['/admin', '/cuisine', '/commande', '/table']
+const PAGES_SANS_BULLES = ['/admin', '/cuisine', '/commande', '/table', '/reservation']
+
+// Sans clé Anthropic en production, le chatbot ne peut que répondre « indisponible » :
+// on n'affiche sa bulle qu'une fois NEXT_PUBLIC_CHATBOT_ENABLED=1 défini dans Vercel
+// (en même temps qu'ANTHROPIC_API_KEY).
+const CHATBOT_ACTIF = process.env.NEXT_PUBLIC_CHATBOT_ENABLED === '1'
 
 export default function ChatbotWidget() {
   const pathname = usePathname()
-  const masque = PAGES_SANS_BULLES.some(p => pathname?.startsWith(p))
+  const masque = !CHATBOT_ACTIF || PAGES_SANS_BULLES.some(p => pathname?.startsWith(p))
 
   const [ouvert, setOuvert] = useState(false)
   const [messages, setMessages] = useState([
@@ -65,7 +70,7 @@ export default function ChatbotWidget() {
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Désolée, je rencontre un problème technique. Appelez-nous au +237 677 000 000 🙏',
+        content: 'Désolée, je rencontre un problème technique. Appelez-nous au +237 691 78 33 41 🙏',
       }])
     } finally {
       setLoading(false)

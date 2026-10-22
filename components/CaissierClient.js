@@ -143,7 +143,7 @@ export default function CaissierClient({ user }) {
             qrUrl: qrUrl || null,
             restaurantNom: parametres?.nom || 'CHEZ MAMAN BIYA',
             restaurantAdresse: parametres?.adresse || 'Yaoundé, Cameroun',
-            restaurantTel: parametres?.telephone || '+237 677 000 000',
+            restaurantTel: parametres?.telephone || '+237 691 78 33 41',
           }))
           win.document.close()
           setTimeout(() => { win.focus(); win.print() }, 300)

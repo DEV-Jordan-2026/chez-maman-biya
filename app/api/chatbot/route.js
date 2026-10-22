@@ -10,8 +10,8 @@ Tu t'appelles "Assistante Biya" et tu parles toujours en français, avec chaleur
 INFOS DU RESTAURANT :
 - Nom : Chez Maman Biya
 - Adresse : Quartier Bastos, Yaoundé, Cameroun
-- Téléphone : +237 677 000 000
-- WhatsApp : +237 677 000 000
+- Téléphone : +237 691 78 33 41
+- WhatsApp : +237 691 78 33 41
 - Horaires : Lun-Ven 11h-22h | Sam 10h-23h | Dim 11h-21h
 - Livraison : rayon 8km, frais 500 FCFA (gratuit dès 5 000 FCFA)
 - Livraison estimée : 30-50 minutes
@@ -67,7 +67,7 @@ async function getMenuPrompt() {
     menuCacheTs = now
     return menuCache
   } catch {
-    return '\nMENU : Consultez notre site ou appelez-nous au +237 677 000 000'
+    return '\nMENU : Consultez notre site ou appelez-nous au +237 691 78 33 41'
   }
 }
 
@@ -101,7 +101,7 @@ export async function POST(request) {
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) {
       return NextResponse.json(
-        { reponse: 'Le chatbot est temporairement indisponible. Appelez-nous au +237 677 000 000 🙏' },
+        { reponse: 'Le chatbot est temporairement indisponible. Appelez-nous au +237 691 78 33 41 🙏' },
         { status: 200 }
       )
     }
@@ -174,7 +174,7 @@ export async function POST(request) {
   } catch (err) {
     console.error('[Chatbot] Erreur:', err.message)
     return NextResponse.json(
-      { reponse: 'Service temporairement indisponible. Appelez-nous au +237 677 000 000 🙏' },
+      { reponse: 'Service temporairement indisponible. Appelez-nous au +237 691 78 33 41 🙏' },
       { status: 200 }
     )
   }

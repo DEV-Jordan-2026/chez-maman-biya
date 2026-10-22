@@ -87,7 +87,7 @@ function CaisseDirecteTab({ bannerHeight = 0, sessionCaisse, parametres, brandin
       caissier: sessionCaisse?.ouvertPar, sessionId: sessionCaisse?.id, note: recu.note,
       restaurantNom: parametres?.nom || 'CHEZ MAMAN BIYA',
       restaurantAdresse: parametres?.adresse || 'Yaoundé, Cameroun',
-      restaurantTel: parametres?.telephone || '+237 677 000 000',
+      restaurantTel: parametres?.telephone || '+237 691 78 33 41',
       numeroFacture: recu.numeroFacture,
       logo: branding?.logo || null,
       qrUrl: recu.qrUrl || null,

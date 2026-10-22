@@ -86,7 +86,7 @@ function FacturationTab({ commandes, selectedId, onSelect, bannerHeight = 0, ses
         : null,
       restaurantNom: parametres?.nom || 'CHEZ MAMAN BIYA',
       restaurantAdresse: parametres?.adresse || 'Yaoundé, Cameroun',
-      restaurantTel: parametres?.telephone || '+237 677 000 000',
+      restaurantTel: parametres?.telephone || '+237 691 78 33 41',
     }))
     win.document.close()
     setTimeout(() => { win.focus(); win.print() }, 300)
@@ -174,7 +174,7 @@ function FacturationTab({ commandes, selectedId, onSelect, bannerHeight = 0, ses
           <div style={{ background: 'rgba(240,232,216,.03)', border: '1px solid rgba(201,151,60,.15)', borderRadius: 14, padding: '20px 18px', fontFamily: 'monospace', fontSize: 12 }}>
             <div style={{ textAlign: 'center', marginBottom: 14 }}>
               <div style={{ fontSize: 14, fontWeight: 900 }}>★ CHEZ MAMAN BIYA ★</div>
-              <div style={{ opacity: .35, fontSize: 10, marginTop: 4 }}>Bastos, Yaoundé · +237 677 000 000</div>
+              <div style={{ opacity: .35, fontSize: 10, marginTop: 4 }}>Bastos, Yaoundé · +237 691 78 33 41</div>
             </div>
             <div style={{ borderTop: '1px dashed rgba(255,255,255,.15)', margin: '10px 0' }} />
             {[

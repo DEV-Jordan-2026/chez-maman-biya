@@ -516,3 +516,8 @@ input, textarea, select { font-family: inherit; }
   /* Exceptions : les indicateurs d'état doivent rester visibles */
   .spin, .spin-slow { animation: none !important; }
 }
+
+/* ── Bulles flottantes ────────────────────────────────────────── */
+/* Place libre sous le pied de page : les bulles WhatsApp et chatbot (fixes, en bas
+   d'écran) ne recouvrent plus les derniers liens (Mentions légales, Espace équipe). */
+.site-footer { padding-bottom: 84px; }

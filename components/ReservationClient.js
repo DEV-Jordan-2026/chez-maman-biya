@@ -521,8 +521,8 @@ export default function ReservationClient() {
             display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
           }}>
             {[
-              { icon: '📞', titre: 'Téléphone', val: '+237 677 000 000', href: 'tel:+237677000000' },
-              { icon: '💬', titre: 'WhatsApp',  val: 'Écrire maintenant', href: `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237677000000'}` },
+              { icon: '📞', titre: 'Téléphone', val: '+237 691 78 33 41', href: 'tel:+237691783341' },
+              { icon: '💬', titre: 'WhatsApp',  val: 'Écrire maintenant', href: `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237691783341'}` },
               { icon: '📍', titre: 'Adresse',   val: 'Bastos, Yaoundé' },
               { icon: '🕐', titre: 'Horaires',  val: 'Lun–Ven 11h–22h' },
             ].map(info => (
@@ -550,6 +550,10 @@ export default function ReservationClient() {
               </div>
             ))}
           </div>
+          {/* Mention démo : le restaurant est fictif, le téléphone et WhatsApp mènent au développeur */}
+          <p style={{ marginTop: 14, fontSize: 12, opacity: .5, lineHeight: 1.6, textAlign: 'center' }}>
+            Site de démonstration : restaurant fictif. Le téléphone et WhatsApp mènent à Steve Jordan Tankoua, développeur du site.
+          </p>
         </Reveal>
       </div>
     </div>

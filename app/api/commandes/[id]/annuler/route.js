@@ -56,14 +56,14 @@ export async function POST(request, context) {
       const minutesEcoulees = (Date.now() - new Date(commande.createdAt).getTime()) / 60_000
       if (minutesEcoulees > DELAI_ANNULATION_MIN) {
         return NextResponse.json({
-          error: `Annulation impossible — délai de ${DELAI_ANNULATION_MIN} minutes dépassé. Contactez le restaurant au +237 677 000 000.`,
+          error: `Annulation impossible — délai de ${DELAI_ANNULATION_MIN} minutes dépassé. Contactez le restaurant au +237 691 78 33 41.`,
           delaiDepasse: true,
           minutesEcoulees: Math.round(minutesEcoulees),
         }, { status: 422 })
       }
       if (!STATUTS_ANNULABLES.includes(commande.status)) {
         return NextResponse.json({
-          error: `Votre commande est déjà en préparation — annulation impossible en ligne. Appelez le +237 677 000 000.`,
+          error: `Votre commande est déjà en préparation — annulation impossible en ligne. Appelez le +237 691 78 33 41.`,
           enPreparation: true,
         }, { status: 422 })
       }

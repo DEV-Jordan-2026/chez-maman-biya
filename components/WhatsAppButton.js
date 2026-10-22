@@ -5,14 +5,14 @@
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237677000000'
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '237691783341'
 const WA_MESSAGE = encodeURIComponent(
   'Bonjour Maman Biya ! 👋\nJe souhaite passer une commande / faire une réservation.'
 )
 
 // Pages où les bulles flottantes (WhatsApp + Chatbot) gênent une action
 // principale déjà présente en bas d'écran (panier, encaissement, cuisine…)
-const PAGES_SANS_BULLES = ['/admin', '/cuisine', '/commande', '/table']
+const PAGES_SANS_BULLES = ['/admin', '/cuisine', '/commande', '/table', '/reservation']
 
 export default function WhatsAppButton() {
   const pathname = usePathname()
